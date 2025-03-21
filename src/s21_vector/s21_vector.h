@@ -5,7 +5,7 @@
 #include <limits>
 #include <memory>
 
-namespace s21 {
+namespace S21 {
 
 template <typename T>
 class vector {
@@ -106,6 +106,7 @@ class vector {
     v.size_ = 0;
     v.capacity_ = 0;
   }
+
   /* возврат размера занятой памяти объектами */
   size_type size() const noexcept { return size_; }
   /* возврат размера выделенной памяти */
@@ -118,6 +119,11 @@ class vector {
   iterator begin() const noexcept { return data_; }
   iterator end() const noexcept { return data_ + size_; }
 
+  const_reference front() const noexcept { return *data_; }
+  const_reference back() const noexcept { return *(data_ + size_ - 1); }
+  const_iterator cbegin() const noexcept { return data_; }
+  const_iterator cend() const noexcept { return data_ + size_; }
+
   /* возврат ссылки на область памяти */
   value_type* data() const noexcept { return data_; }
 
@@ -128,7 +134,7 @@ class vector {
   void shrink_to_fit() {
     if (capacity_ > size_) {
       value_type* new_data = allocator_.allocate(size_);
-      std::uninitialized_copy(data_, data_ + size_, new_data);
+      std::uninitialized_move(data_, data_ + size_, new_data);
       allocator_.deallocate(data_, capacity_);
       data_ = new_data;
       capacity_ = size_;
@@ -141,7 +147,6 @@ class vector {
       for (size_type i = 0; i < size_; ++i) {
         data_[i].~value_type();
       }
-      allocator_.deallocate(data_, capacity_);
       size_ = 0;
     }
   }
@@ -165,19 +170,30 @@ class vector {
 
   /* вставка элемента в pos контейнера */
   iterator insert(iterator pos, const_reference value) {
-    if (pos > data_ + size_) {
-      throw std::out_of_range("Out of range");
+    if (pos < begin() || pos > end()) {
+        throw std::out_of_range("Out of range");
     }
+
+    ptrdiff_t offset = pos - begin(); 
+
     if (size_ >= capacity_) {
-      size_type new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-      value_type* new_data = allocator_.allocate(new_capacity);
-      std::uninitialized_copy(data_, pos, new_data);
-      new (new_data + pos - data_) value_type(value);
-      std::uninitialized_copy(pos, end(), new_data + (pos - data_) + 1);
-      allocator_.deallocate(data_, capacity_);
-      data_ = new_data;
+        size_type new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+        value_type* new_data = allocator_.allocate(new_capacity);
+        std::uninitialized_copy(data_, pos, new_data); 
+        new (new_data + offset) value_type(value); 
+        std::uninitialized_copy(pos, end(), new_data + offset + 1); 
+        allocator_.deallocate(data_, capacity_); 
+        data_ = new_data; 
+        capacity_ = new_capacity; 
+    } else {
+        std::move(pos, end(), pos + 1); 
+        new (pos) value_type(value);
     }
-  }
+
+    size_++; 
+    return begin() + offset; 
+}
+
 
   /* деструктор */
   ~vector() {
@@ -188,6 +204,7 @@ class vector {
       allocator_.deallocate(data_, capacity_);
       size_ = 0;
       capacity_ = 0;
+      data_ = nullptr;
     }
   }
   /* перемещение */
@@ -213,6 +230,13 @@ class vector {
     return data_[pos];
   }
 
+  const_reference operator[](size_type pos) const {
+    if (pos >= capacity_) {
+        throw std::out_of_range("Out of range");
+    }
+    return data_[pos];
+}
+
   /* добавление элемента в конец контейнера */
   void push_back(const_reference value) {
     if (size_ >= capacity_) {
@@ -227,7 +251,7 @@ class vector {
       capacity_ = new_capacity;
       data_ = new_data;
     } else {
-      new (data_ + size_) value_type(value);
+        new (data_ + size_) value_type(value);
     }
     size_++;
   }
