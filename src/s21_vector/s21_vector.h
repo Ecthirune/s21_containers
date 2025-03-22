@@ -12,10 +12,10 @@ class vector {
   /* member types */
  public:
   using value_type = T;
-  using reference = T&;
   using const_reference = const T&;
-  using iterator = T*;
   using const_iterator = const T*;
+  using iterator = T*;
+  using reference = T&;
   using size_type = size_t;
   using allocator_type = std::allocator<T>;
 
@@ -109,15 +109,18 @@ class vector {
 
   /* возврат размера занятой памяти объектами */
   size_type size() const noexcept { return size_; }
+  
   /* возврат размера выделенной памяти */
   size_type capacity() const noexcept { return capacity_; }
+  
   /* максимальный размер памяти, который может быть выделен */
   size_type max_size() const noexcept {
     return std::numeric_limits<size_type>::max();
   }
+  
   /* возврат итераторов на начало и конец массива */
-  iterator begin() const noexcept { return data_; }
-  iterator end() const noexcept { return data_ + size_; }
+  iterator begin() noexcept { return data_; }
+  iterator end() noexcept { return data_ + size_; }
 
   const_reference front() const noexcept { return *data_; }
   const_reference back() const noexcept { return *(data_ + size_ - 1); }
