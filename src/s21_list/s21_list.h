@@ -2,30 +2,36 @@
 #include <initializer_list>
 #include <limits>
 #include <memory>
+#include <stdexcept>
+
 namespace S21 {
 
 template <typename T>
 class list {
+
+
+    
+ private:
+ struct Node {
+   T value;
+   Node* next;
+   Node* prev;
+   Node() : value(T()), next(nullptr), prev(nullptr){};
+   Node(const T& val) : value(val), next(nullptr), prev(nullptr){};
+ };
+ Node* head_ = nullptr;
+ Node* tail_ = nullptr;
+ size_t size_ = 0;
+
+
  public:
   using value_type = T;
   using reference = T&;
-  using const_reference = const T*;
+  using const_reference = const T&;
   using iterator = Node*;
   using const_iterator = const Node*;
   using size_type = size_t;
   using allocator_type = std::allocator<T>;
-
- private:
-  struct Node {
-    T value;
-    Node* next;
-    Node* prev;
-    Node() : value(T()), next(nullptr){};
-    Node(const T& val) : value(val), next(nullptr){};
-  };
-  Node* head_;
-  Node* tail_;
-  size_t size_;
 
  public:
   list() : head_(nullptr), tail_(nullptr), size_(0){};
@@ -122,8 +128,8 @@ class list {
     }
     return *this;
   }
-  const_reference front() const noexcept { return &(head_->value); }
-  const_reference back() const noexcept { return &(tail_->value); }
+  const_reference front() const noexcept { return head_->value; }
+  const_reference back() const noexcept { return tail_->value; }
   iterator begin() noexcept { return head_; }
   iterator end() noexcept { return nullptr; }
 
@@ -146,13 +152,34 @@ class list {
   };
 
   iterator insert(iterator pos, const_reference value) {
-    if (pos == nullptr) {
-      push_back(value);
-      return tail_;
-    } else if (pos == head_) {
-      push_front(value);
-      return head_;
+    Node* new_node = new Node(value);
+    if (pos == nullptr || head_ == pos) {
+        new_node->next = head_;
+        if (head_)
+        {
+            head_->prev = new_node;
+        }
+        head_ = new_node;
+    } else 
+    {
+        Node* current = head_;
+        while(current && current->next != pos)
+        {
+            current = current->next;
+        }
+        if (current)
+        {
+            new_node->next = pos;
+            new_node->prev = current;
+            current->next = new_node;
+            pos->prev = new_node;
+        }else
+        {
+            delete new_node;
+            throw std::out_of_range("Iterator is not in the list");
+        }
     }
+    return new_node;
   };
 
   //   void erase(iterator pos) {

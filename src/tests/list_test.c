@@ -52,9 +52,21 @@ TEST(ListTest, Complex_constructor) {
   std::cout << "Creating list\n";
   S21::list<ComplicatedClass> list(2);
   std::cout << "Accessing front\n";
-  std::cout << list.front()->test[0] << std::endl;
+  std::cout << list.front().test[0] << std::endl;
   std::cout << "Test end\n";
 }
+
+TEST(ListTest, Insert_At_Beginning) {
+    S21::list<int> my_list;
+    std::list<int> std_list;
+    const int  some_value = 42;
+
+    my_list.insert(my_list.begin(), some_value);
+    // std_list.insert(std_list.begin(), 42);
+  
+    // ASSERT_EQ(my_list.begin().value, 42);
+    // ASSERT_EQ(*std_list.begin(), 42);
+  }
 
 /*
 TEST(ListTest, Clear) {
