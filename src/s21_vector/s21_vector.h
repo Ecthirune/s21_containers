@@ -69,7 +69,7 @@ class vector {
     if (size_ > 0) {
       data_ = allocator_.allocate(capacity_);
       try {
-        std::uninitialized_copy(v.begin(), v.end(), data_);
+        std::uninitialized_copy(v.cbegin(), v.cend(), data_);
       } catch (...) {
         allocator_.deallocate(data_, capacity_);
         throw;
@@ -82,7 +82,7 @@ class vector {
     if (this != &v) {
       if (data_) {
         for (size_type i = 0; i < size_; ++i) {
-            data_[i].~value_type();
+          data_[i].~value_type();
         }
         allocator_.deallocate(data_, capacity_);
       }
@@ -109,15 +109,15 @@ class vector {
 
   /* возврат размера занятой памяти объектами */
   size_type size() const noexcept { return size_; }
-  
+
   /* возврат размера выделенной памяти */
   size_type capacity() const noexcept { return capacity_; }
-  
+
   /* максимальный размер памяти, который может быть выделен */
   size_type max_size() const noexcept {
     return std::numeric_limits<size_type>::max();
   }
-  
+
   /* возврат итераторов на начало и конец массива */
   iterator begin() noexcept { return data_; }
   iterator end() noexcept { return data_ + size_; }
@@ -174,29 +174,28 @@ class vector {
   /* вставка элемента в pos контейнера */
   iterator insert(iterator pos, const_reference value) {
     if (pos < begin() || pos > end()) {
-        throw std::out_of_range("Out of range");
+      throw std::out_of_range("Out of range");
     }
 
-    ptrdiff_t offset = pos - begin(); 
+    ptrdiff_t offset = pos - begin();
 
     if (size_ >= capacity_) {
-        size_type new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
-        value_type* new_data = allocator_.allocate(new_capacity);
-        std::uninitialized_copy(data_, pos, new_data); 
-        new (new_data + offset) value_type(value); 
-        std::uninitialized_copy(pos, end(), new_data + offset + 1); 
-        allocator_.deallocate(data_, capacity_); 
-        data_ = new_data; 
-        capacity_ = new_capacity; 
+      size_type new_capacity = (capacity_ == 0) ? 1 : capacity_ * 2;
+      value_type* new_data = allocator_.allocate(new_capacity);
+      std::uninitialized_copy(data_, pos, new_data);
+      new (new_data + offset) value_type(value);
+      std::uninitialized_copy(pos, end(), new_data + offset + 1);
+      allocator_.deallocate(data_, capacity_);
+      data_ = new_data;
+      capacity_ = new_capacity;
     } else {
-        std::move(pos, end(), pos + 1); 
-        new (pos) value_type(value);
+      std::move(pos, end(), pos + 1);
+      new (pos) value_type(value);
     }
 
-    size_++; 
-    return begin() + offset; 
-}
-
+    size_++;
+    return begin() + offset;
+  }
 
   /* деструктор */
   ~vector() {
@@ -210,6 +209,7 @@ class vector {
       data_ = nullptr;
     }
   }
+
   /* перемещение */
   void swap(vector& other) noexcept {
     std::swap(data_, other.data_);
@@ -217,6 +217,7 @@ class vector {
     std::swap(capacity_, other.capacity_);
     std::swap(allocator_, other.allocator_);
   }
+
   /* доступ к элементу через at */
   reference at(size_type pos) {
     if (pos >= capacity_) {
@@ -235,10 +236,10 @@ class vector {
 
   const_reference operator[](size_type pos) const {
     if (pos >= capacity_) {
-        throw std::out_of_range("Out of range");
+      throw std::out_of_range("Out of range");
     }
     return data_[pos];
-}
+  }
 
   /* добавление элемента в конец контейнера */
   void push_back(const_reference value) {
@@ -254,7 +255,7 @@ class vector {
       capacity_ = new_capacity;
       data_ = new_data;
     } else {
-        new (data_ + size_) value_type(value);
+      new (data_ + size_) value_type(value);
     }
     size_++;
   }
@@ -273,4 +274,4 @@ class vector {
     }
   }
 };
-};  // namespace s21
+};  // namespace S21

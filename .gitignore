@@ -54,4 +54,3 @@ dkms.conf
 main.c
 main.cpp
 *.out
-tests/
