@@ -59,10 +59,10 @@ TEST(ListTest, Complex_constructor) {
 /*
 TEST(ListTest, Clear) {
   S21::list<int> lst;
-  lst.push_back(1);  // Предполагается метод push_back
+  lst.push_back(1);  
   lst.push_back(2);
   lst.push_back(3);
-  ASSERT_EQ(lst.size_, 3);  // Предполагается доступ к size_
+  ASSERT_EQ(lst.size_, 3);  
   lst.clear();
   ASSERT_EQ(lst.size_, 0);
   ASSERT_EQ(lst.head_, nullptr);
