@@ -10,8 +10,8 @@ class list {
   using value_type = T;
   using reference = T&;
   using const_reference = const T*;
-  using iterator = T*;
-  using const_iterator = T&;
+  using iterator = Node*;
+  using const_iterator = const Node*;
   using size_type = size_t;
   using allocator_type = std::allocator<T>;
 
