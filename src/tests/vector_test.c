@@ -1,6 +1,25 @@
 #include "../s21_vector/s21_vector.h"
 
 #include <gtest/gtest.h>
+
+class ComplicatedClass
+{
+	public:
+	int* test;
+	ComplicatedClass()
+	{
+		test = new int[2];
+		test[0]=5;
+	};
+	~ComplicatedClass(){
+		delete[] test;
+	};
+};
+TEST(VectorTest, Complicated_constructor) {
+  S21::vector<ComplicatedClass> v(5);
+	EXPECT_EQ(v[0].test[0], 5);
+}
+
 TEST(VectorTest, DefaultConstructor_EmptyVector) {
   S21::vector<int> v;
   EXPECT_TRUE(v.empty());

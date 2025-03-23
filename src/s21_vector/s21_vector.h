@@ -50,7 +50,6 @@ class vector {
     capacity_ = size_;
     if (size_ > 0) {
       data_ = allocator_.allocate(capacity_);
-      size_type i = 0;
       try {
         std::uninitialized_copy(items.begin(), items.end(), data_);
       } catch (...) {
