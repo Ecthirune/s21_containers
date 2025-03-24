@@ -12,10 +12,13 @@ class vector {
   /* member types */
  public:
   using value_type = T;
-  using const_reference = const T&;
-  using const_iterator = const T*;
+
   using iterator = T*;
+  using const_iterator = const T*;
+
   using reference = T&;
+  using const_reference = const T&;
+  
   using size_type = size_t;
   using allocator_type = std::allocator<T>;
 
