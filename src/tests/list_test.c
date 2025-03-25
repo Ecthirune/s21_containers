@@ -240,5 +240,63 @@ TEST(ListTest, Assignment_Operator) {
   ASSERT_TRUE(list1.empty());
   ASSERT_EQ(list2.size(), 3);
   ASSERT_EQ(list2.front(), 1);
-  
 }
+
+TEST(ListTest, pop_front_default) {
+  S21::list<int> my_list;
+  my_list.push_back(1);
+  my_list.push_back(2);
+  my_list.push_back(3);
+  ASSERT_EQ(my_list.size(), 3);
+  my_list.pop_front();
+  ASSERT_EQ(my_list.size(), 2);
+  ASSERT_EQ(my_list.front(), 2);
+  ASSERT_EQ(my_list.begin()->prev, nullptr);
+  ASSERT_EQ(my_list.begin()->value, 2);
+}
+
+TEST(ListTest, pop_front_single)
+{
+  S21::list<int> my_list = {1};
+  my_list.pop_front();
+  ASSERT_TRUE(my_list.empty());
+  ASSERT_EQ(my_list.size(), 0);
+  ASSERT_EQ(my_list.begin(), nullptr);
+  ASSERT_EQ(my_list.end(), nullptr);
+  ASSERT_THROW(my_list.pop_front(), std::out_of_range);
+}
+
+TEST(ListTest, swap)
+{
+  S21::list<int> list1 = {1, 2, 3};
+  S21::list<int> list2 = {4, 5, 6};
+  list1.swap(list2);
+  ASSERT_EQ(list1.size(), 3);
+  ASSERT_EQ(list2.size(), 3);
+  ASSERT_EQ(list1.front(), 4);
+  ASSERT_EQ(list1.back(), 6);
+  ASSERT_EQ(list2.front(), 1);
+  ASSERT_EQ(list2.back(), 3);
+}
+
+TEST(ListTest, merge)
+{
+  S21::list<int> list1 = {1, 3, 5};
+  S21::list<int> list2 = {2, 4, 6};
+  list1.merge(list2);
+  ASSERT_EQ(list1.size(), 6);
+  ASSERT_EQ(list1.front(), 1);
+  ASSERT_EQ(list1.back(), 6);
+
+}
+
+TEST(ListTest, merge_empty_with_filled)
+{
+  S21::list<int> list1;
+  S21::list<int> list2 = {1, 3, 5};
+  list1.merge(list2);
+  ASSERT_EQ(list1.size(), 3);
+  ASSERT_EQ(list1.front(), 1);
+  ASSERT_EQ(list1.back(), 5);
+}
+

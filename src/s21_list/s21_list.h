@@ -284,6 +284,7 @@ class list {
       head_ = temp;
       head_->prev = nullptr;
     }
+    size_--;
   };
 
   /* смена данных местами */
