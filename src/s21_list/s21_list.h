@@ -110,25 +110,17 @@ class list {
 
   /* конструктор присваивания */
   list& operator=(list&& l) noexcept {
-    if (this != l) {
-      while (head_ != nullptr) {
-        Node* temp = head_;
-        head_ = head_->next;
-        delete temp;
-      }
-      tail_ = nullptr;
-      size_ = 0;
-
-      head_ = l.head_;
-      tail_ = l.tail_;
-      size_ = l.size_;
-
-      l.head_ = nullptr;
-      l.tail_ = nullptr;
-      l.size_ = 0;
+    if (this != &l) { 
+        delete head_; 
+        head_ = l.head_;
+        tail_ = l.tail_;
+        size_ = l.size_;
+        l.head_ = nullptr;
+        l.tail_ = nullptr;
+        l.size_ = 0;
     }
     return *this;
-  };
+}
 
   const_reference front() const noexcept { return head_->value; };
   const_reference back() const noexcept { return tail_->value; };
@@ -156,48 +148,48 @@ class list {
     Node* result = nullptr;
     /* пустой список */
     if (!head_) {
-        head_ = new_node;
-        tail_ = new_node;
-        new_node->next = nullptr;
-        new_node->prev = nullptr;
-        result = new_node;
+      head_ = new_node;
+      tail_ = new_node;
+      new_node->next = nullptr;
+      new_node->prev = nullptr;
+      result = new_node;
     }
     /* вставка в конец */
     else if (pos == nullptr) {
-        new_node->prev = tail_;
-        new_node->next = nullptr;
-        tail_->next = new_node;
-        tail_ = new_node;
-        result = new_node;
+      new_node->prev = tail_;
+      new_node->next = nullptr;
+      tail_->next = new_node;
+      tail_ = new_node;
+      result = new_node;
     }
     /* вставка в начало */
     else if (pos == head_) {
-        new_node->next = head_;
-        head_->prev = new_node;
-        head_ = new_node;
-        new_node->prev = nullptr;
-        result = new_node;
+      new_node->next = head_;
+      head_->prev = new_node;
+      head_ = new_node;
+      new_node->prev = nullptr;
+      result = new_node;
     }
     /* вставка в середину или отсутствие итератора pos в листе */
     else {
-        Node* current = head_;
-        while (current && current->next != pos) {
-            current = current->next;
-        }
-        if (current) {
-            new_node->next = pos;
-            new_node->prev = current;
-            current->next = new_node;
-            pos->prev = new_node;
-            result = new_node;
-        } else {
-            delete new_node;
-            throw std::out_of_range("Iterator is not in the list");
-        }
+      Node* current = head_;
+      while (current && current->next != pos) {
+        current = current->next;
+      }
+      if (current) {
+        new_node->next = pos;
+        new_node->prev = current;
+        current->next = new_node;
+        pos->prev = new_node;
+        result = new_node;
+      } else {
+        delete new_node;
+        throw std::out_of_range("Iterator is not in the list");
+      }
     }
     size_++;
     return result;
-}
+  }
 
   /* удаление элемента */
   void erase(iterator pos) {
@@ -391,6 +383,30 @@ class list {
       tail_ = head_;
     } else if (size_ == 0) {
       head_ = tail_ = nullptr;
+    }
+  };
+
+  void sort() {
+    if (size_ <= 1) {
+      return;
+    }
+
+    Node* i = head_;
+    Node* j = nullptr;
+    int temp;
+
+    while (i != nullptr) {
+      j = i->next;
+
+      while (j != nullptr) {
+        if (i->value > j->value) {
+          temp = i->value;
+          i->value = j->value;
+          j->value = temp;
+        }
+        j = j->next;
+      }
+      i = i->next;
     }
   }
 };

@@ -67,11 +67,10 @@ TEST(ListTest, Insert_Into_Empty) {
   ASSERT_EQ(*std_list.begin(), 42);
 }
 
-
 TEST(ListTest, Insert_At_End_Non_Empty) {
   S21::list<int> my_list;
   std::list<int> std_list;
-  my_list.insert(my_list.begin(), 1); 
+  my_list.insert(my_list.begin(), 1);
   std_list.push_back(1);
 
   auto it = my_list.insert(my_list.end(), 42);
@@ -85,10 +84,10 @@ TEST(ListTest, Insert_At_End_Non_Empty) {
 TEST(ListTest, Insert_At_Beginning_Non_Empty) {
   S21::list<int> my_list;
   std::list<int> std_list;
-  my_list.insert(my_list.begin(), 1); 
+  my_list.insert(my_list.begin(), 1);
   std_list.push_back(1);
 
-  auto it = my_list.insert(my_list.begin(), 42); 
+  auto it = my_list.insert(my_list.begin(), 42);
   std_list.insert(std_list.begin(), 42);
 
   ASSERT_EQ(my_list.size(), 2);
@@ -99,12 +98,12 @@ TEST(ListTest, Insert_At_Beginning_Non_Empty) {
 TEST(ListTest, Insert_In_Middle) {
   S21::list<int> my_list;
   std::list<int> std_list;
-  my_list.insert(my_list.begin(), 1); 
-  auto second_it = my_list.insert(my_list.end(), 3); 
+  my_list.insert(my_list.begin(), 1);
+  auto second_it = my_list.insert(my_list.end(), 3);
   std_list.push_back(1);
   std_list.push_back(3);
 
-  auto it = my_list.insert(second_it, 42); 
+  auto it = my_list.insert(second_it, 42);
   auto std_it = std_list.insert(++std_list.begin(), 42);
 
   ASSERT_EQ(my_list.size(), 3);
@@ -114,9 +113,9 @@ TEST(ListTest, Insert_In_Middle) {
 
 TEST(ListTest, Insert_Invalid_Iterator) {
   S21::list<int> my_list;
-  my_list.insert(my_list.begin(), 1); 
+  my_list.insert(my_list.begin(), 1);
 
-  S21::list<int>::iterator invalid_it; 
+  S21::list<int>::iterator invalid_it;
   ASSERT_THROW(my_list.insert(invalid_it, 42), std::out_of_range);
 }
 
@@ -205,4 +204,41 @@ TEST(ListTest, push_front_add_remove_single_entry) {
   my_list.push_front(10);
   ASSERT_EQ(my_list.size(), 5);
   ASSERT_EQ(my_list.front(), 10);
+}
+
+
+TEST(ListTest, Sort) {
+
+  S21::list<int> my_list = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+  my_list.sort();
+
+  ASSERT_EQ(my_list.size(), 11);
+  ASSERT_EQ(my_list.front(), 1);
+  ASSERT_EQ(my_list.back(), 9);
+}
+
+TEST(ListTest, Sort_Empty_List) {
+  S21::list<int> my_list;
+  my_list.sort();
+  ASSERT_TRUE(my_list.empty());
+}
+
+TEST(ListTest, Move_Constructor) {
+  S21::list<int> my_list = {1, 2, 3};
+  S21::list<int> moved_list(std::move(my_list));
+  ASSERT_TRUE(my_list.empty());
+  ASSERT_EQ(moved_list.size(), 3);
+  ASSERT_EQ(moved_list.front(), 1);
+  ASSERT_EQ(moved_list.back(), 3);
+
+}
+
+TEST(ListTest, Assignment_Operator) {
+  S21::list<int> list1 = {1, 2, 3};
+  S21::list<int> list2;
+  list2 = std::move(list1);
+  ASSERT_TRUE(list1.empty());
+  ASSERT_EQ(list2.size(), 3);
+  ASSERT_EQ(list2.front(), 1);
+  
 }
