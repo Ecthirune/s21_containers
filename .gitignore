@@ -51,6 +51,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-main.c
-main.cpp
 *.out

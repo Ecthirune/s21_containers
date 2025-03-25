@@ -1,6 +1,6 @@
 COMPILER = g++ -std=c++17
 CFLAGS = 
-TESTFLAGS = -lgtest -g -fno-elide-constructors
+TESTFLAGS = -lgtest -lgtest_main -g -fno-elide-constructors
 TEST_EXE = test_runner.out
 
 CONTAINERS = list vector deque
@@ -20,7 +20,7 @@ test: $(TEST_OBJ)
 	./$(TEST_EXE)
 
 clean:
-	rm -rf $(TEST_OBJ) $(TEST_EXE) tests/*.info tests/*.gcda tests/*.gcno tests/*.out tests/*.o tests/report/ *.o
+	rm -rf $(TEST_OBJ) $(TEST_EXE) tests/*.info tests/*.gcda tests/*.gcno tests/*.out tests/*.o tests/report/ *.o *.out
 
 OS := $(shell uname -s)
 ifeq ($(OS), Linux)

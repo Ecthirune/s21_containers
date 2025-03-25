@@ -1,23 +1,19 @@
-#include "../s21_vector/s21_vector.h"
-
 #include <gtest/gtest.h>
 
-class ComplicatedClass
-{
-	public:
-	int* test;
-	ComplicatedClass()
-	{
-		test = new int[2];
-		test[0]=5;
-	};
-	~ComplicatedClass(){
-		delete[] test;
-	};
+#include "../s21_vector/s21_vector.h"
+
+class ComplicatedClass {
+ public:
+  int* test;
+  ComplicatedClass() {
+    test = new int[2];
+    test[0] = 5;
+  };
+  ~ComplicatedClass() { delete[] test; };
 };
 TEST(VectorTest, Complicated_constructor) {
   S21::vector<ComplicatedClass> v(5);
-	EXPECT_EQ(v[0].test[0], 5);
+  EXPECT_EQ(v[0].test[0], 5);
 }
 
 TEST(VectorTest, DefaultConstructor_EmptyVector) {
@@ -432,144 +428,138 @@ TEST(VectorTest, Swap_EmptyAndNonEmptyVectors) {
   EXPECT_TRUE(v2.empty());
 }
 TEST(VectorIteratorTest, DefaultConstructionAndDereference) {
-    S21::vector<int> v = {1, 2, 3};
-    auto it = v.begin();
-    EXPECT_EQ(*it, 1); // Проверка разыменования
+  S21::vector<int> v = {1, 2, 3};
+  auto it = v.begin();
+  EXPECT_EQ(*it, 1);  // Проверка разыменования
 }
 
 TEST(VectorIteratorTest, Increment) {
-    S21::vector<int> v = {1, 2, 3};
-    auto it = v.begin();
-    ++it; // Префиксный инкремент
-    EXPECT_EQ(*it, 2);
-    it++; // Постфиксный инкремент
-    EXPECT_EQ(*it, 3);
+  S21::vector<int> v = {1, 2, 3};
+  auto it = v.begin();
+  ++it;  // Префиксный инкремент
+  EXPECT_EQ(*it, 2);
+  it++;  // Постфиксный инкремент
+  EXPECT_EQ(*it, 3);
 }
 
 TEST(VectorIteratorTest, Decrement) {
-    S21::vector<int> v = {1, 2, 3};
-    auto it = v.end();
-    --it; // Префиксный декремент
-    EXPECT_EQ(*it, 3);
-    it = v.begin() + 2;
-    it--; // Постфиксный декремент
-    EXPECT_EQ(*it, 2);
+  S21::vector<int> v = {1, 2, 3};
+  auto it = v.end();
+  --it;  // Префиксный декремент
+  EXPECT_EQ(*it, 3);
+  it = v.begin() + 2;
+  it--;  // Постфиксный декремент
+  EXPECT_EQ(*it, 2);
 }
 
 TEST(VectorIteratorTest, Arithmetic) {
-    S21::vector<int> v = {1, 2, 3, 4, 5};
-    auto it = v.begin();
-    it = it + 2; // Сдвиг вперед
-    EXPECT_EQ(*it, 3);
-    it = it - 1; // Сдвиг назад
-    EXPECT_EQ(*it, 2);
+  S21::vector<int> v = {1, 2, 3, 4, 5};
+  auto it = v.begin();
+  it = it + 2;  // Сдвиг вперед
+  EXPECT_EQ(*it, 3);
+  it = it - 1;  // Сдвиг назад
+  EXPECT_EQ(*it, 2);
 }
 
 TEST(VectorIteratorTest, Difference) {
-    S21::vector<int> v = {1, 2, 3, 4, 5};
-    auto it1 = v.begin();
-    auto it2 = v.end();
-    ptrdiff_t diff = it2 - it1;
-    EXPECT_EQ(diff, 5); // Разность между end() и begin() = размер вектора
+  S21::vector<int> v = {1, 2, 3, 4, 5};
+  auto it1 = v.begin();
+  auto it2 = v.end();
+  ptrdiff_t diff = it2 - it1;
+  EXPECT_EQ(diff, 5);  // Разность между end() и begin() = размер вектора
 }
 
 TEST(VectorIteratorTest, Comparison) {
-    S21::vector<int> v = {1, 2, 3};
-    auto it1 = v.begin();
-    auto it2 = v.begin();
-    EXPECT_TRUE(it1 == it2); // Равенство
-    ++it1;
-    EXPECT_TRUE(it1 != it2); // Неравенство
+  S21::vector<int> v = {1, 2, 3};
+  auto it1 = v.begin();
+  auto it2 = v.begin();
+  EXPECT_TRUE(it1 == it2);  // Равенство
+  ++it1;
+  EXPECT_TRUE(it1 != it2);  // Неравенство
 }
 
 // Тесты для константных итераторов
 TEST(VectorConstIteratorTest, DefaultConstructionAndDereference) {
-    const S21::vector<int> v = {1, 2, 3};
-    auto it = v.cbegin();
-    EXPECT_EQ(*it, 1); // Проверка разыменования
+  const S21::vector<int> v = {1, 2, 3};
+  auto it = v.cbegin();
+  EXPECT_EQ(*it, 1);  // Проверка разыменования
 }
 
 TEST(VectorConstIteratorTest, Increment) {
-    const S21::vector<int> v = {1, 2, 3};
-    auto it = v.cbegin();
-    ++it; // Префиксный инкремент
-    EXPECT_EQ(*it, 2);
-    it++; // Постфиксный инкремент
-    EXPECT_EQ(*it, 3);
+  const S21::vector<int> v = {1, 2, 3};
+  auto it = v.cbegin();
+  ++it;  // Префиксный инкремент
+  EXPECT_EQ(*it, 2);
+  it++;  // Постфиксный инкремент
+  EXPECT_EQ(*it, 3);
 }
 
 TEST(VectorConstIteratorTest, Decrement) {
-    const S21::vector<int> v = {1, 2, 3};
-    auto it = v.cend();
-    --it; // Префиксный декремент
-    EXPECT_EQ(*it, 3);
-    it = v.cbegin() + 2;
-    it--; // Постфиксный декремент
-    EXPECT_EQ(*it, 2);
+  const S21::vector<int> v = {1, 2, 3};
+  auto it = v.cend();
+  --it;  // Префиксный декремент
+  EXPECT_EQ(*it, 3);
+  it = v.cbegin() + 2;
+  it--;  // Постфиксный декремент
+  EXPECT_EQ(*it, 2);
 }
 
 TEST(VectorConstIteratorTest, Arithmetic) {
-    const S21::vector<int> v = {1, 2, 3, 4, 5};
-    auto it = v.cbegin();
-    it = it + 2; // Сдвиг вперед
-    EXPECT_EQ(*it, 3);
-    it = it - 1; // Сдвиг назад
-    EXPECT_EQ(*it, 2);
+  const S21::vector<int> v = {1, 2, 3, 4, 5};
+  auto it = v.cbegin();
+  it = it + 2;  // Сдвиг вперед
+  EXPECT_EQ(*it, 3);
+  it = it - 1;  // Сдвиг назад
+  EXPECT_EQ(*it, 2);
 }
 
 TEST(VectorConstIteratorTest, Difference) {
-    const S21::vector<int> v = {1, 2, 3, 4, 5};
-    auto it1 = v.cbegin();
-    auto it2 = v.cend();
-    ptrdiff_t diff = it2 - it1;
-    EXPECT_EQ(diff, 5); // Разность между cend() и cbegin() = размер вектора
+  const S21::vector<int> v = {1, 2, 3, 4, 5};
+  auto it1 = v.cbegin();
+  auto it2 = v.cend();
+  ptrdiff_t diff = it2 - it1;
+  EXPECT_EQ(diff, 5);  // Разность между cend() и cbegin() = размер вектора
 }
 
 TEST(VectorConstIteratorTest, Comparison) {
-    const S21::vector<int> v = {1, 2, 3};
-    auto it1 = v.cbegin();
-    auto it2 = v.cbegin();
-    EXPECT_TRUE(it1 == it2); // Равенство
-    ++it1;
-    EXPECT_TRUE(it1 != it2); // Неравенство
+  const S21::vector<int> v = {1, 2, 3};
+  auto it1 = v.cbegin();
+  auto it2 = v.cbegin();
+  EXPECT_TRUE(it1 == it2);  // Равенство
+  ++it1;
+  EXPECT_TRUE(it1 != it2);  // Неравенство
 }
 
 // Тест на совместимость итераторов с изменением вектора
 TEST(VectorIteratorTest, InsertWithIterator) {
-    S21::vector<int> v = {1, 3, 4};
-    auto it = v.begin() + 1;
-    auto new_it = v.insert(it, 2);
-    EXPECT_EQ(*new_it, 2); // Новый итератор указывает на вставленный элемент
-    EXPECT_EQ(v.size(), 4);
-    EXPECT_EQ(v[0], 1);
-    EXPECT_EQ(v[1], 2);
-    EXPECT_EQ(v[2], 3);
-    EXPECT_EQ(v[3], 4);
+  S21::vector<int> v = {1, 3, 4};
+  auto it = v.begin() + 1;
+  auto new_it = v.insert(it, 2);
+  EXPECT_EQ(*new_it, 2);  // Новый итератор указывает на вставленный элемент
+  EXPECT_EQ(v.size(), 4);
+  EXPECT_EQ(v[0], 1);
+  EXPECT_EQ(v[1], 2);
+  EXPECT_EQ(v[2], 3);
+  EXPECT_EQ(v[3], 4);
 }
 
 // Тест на итерирование по всему вектору
 TEST(VectorIteratorTest, FullIteration) {
-    S21::vector<int> v = {1, 2, 3, 4};
-    int expected[] = {1, 2, 3, 4};
-    int i = 0;
-    for (auto it = v.begin(); it != v.end(); ++it) {
-        EXPECT_EQ(*it, expected[i++]);
-    }
-    EXPECT_EQ(i, 4); // Убедимся, что прошли весь вектор
+  S21::vector<int> v = {1, 2, 3, 4};
+  int expected[] = {1, 2, 3, 4};
+  int i = 0;
+  for (auto it = v.begin(); it != v.end(); ++it) {
+    EXPECT_EQ(*it, expected[i++]);
+  }
+  EXPECT_EQ(i, 4);  // Убедимся, что прошли весь вектор
 }
 
 TEST(VectorConstIteratorTest, FullConstIteration) {
-    const S21::vector<int> v = {1, 2, 3, 4};
-    int expected[] = {1, 2, 3, 4};
-    int i = 0;
-    for (auto it = v.cbegin(); it != v.cend(); ++it) {
-        EXPECT_EQ(*it, expected[i++]);
-    }
-    EXPECT_EQ(i, 4); // Убедимся, что прошли весь вектор
-}
-
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+  const S21::vector<int> v = {1, 2, 3, 4};
+  int expected[] = {1, 2, 3, 4};
+  int i = 0;
+  for (auto it = v.cbegin(); it != v.cend(); ++it) {
+    EXPECT_EQ(*it, expected[i++]);
   }
+  EXPECT_EQ(i, 4);  // Убедимся, что прошли весь вектор
+}
