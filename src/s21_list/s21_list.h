@@ -224,7 +224,7 @@ class list {
   };
 
   /* добавление элемента в конец */
-  void push_back(const_reference value) {
+  void push_back(const_reference value) noexcept {
     Node* new_node = new Node(value);
     if (head_ == nullptr) {
       head_ = new_node;
@@ -392,24 +392,227 @@ class list {
       return;
     }
 
-    Node* i = head_;
-    Node* j = nullptr;
-    int temp;
-
-    while (i != nullptr) {
-      j = i->next;
-
-      while (j != nullptr) {
-        if (i->value > j->value) {
-          temp = i->value;
-          i->value = j->value;
-          j->value = temp;
-        }
-        j = j->next;
-      }
-      i = i->next;
+    /* Разделяем список на две части */
+    Node* slow = head_;
+    Node* fast = head_->next;
+    while (fast != nullptr && fast->next != nullptr) {
+      slow = slow->next;
+      fast = fast->next->next;
     }
+    
+    /* Создаем второй список */
+    list second;
+    second.head_ = slow->next;
+    second.tail_ = tail_;
+    second.size_ = size_ / 2;
+    
+    /* Обрезаем первый список */
+    slow->next = nullptr;
+    tail_ = slow;
+    size_ = (size_ + 1) / 2;
+    
+    /* Рекурсивно сортируем обе части */
+    sort();
+    second.sort();
+    
+    /* Сливаем отсортированные списки */
+    Node* current = nullptr;
+    Node* first = head_;
+    Node* second_head = second.head_;
+    
+    /* Выбираем новый head */
+    if (first->value <= second_head->value) {
+      head_ = first;
+      current = first;
+      first = first->next;
+    } else {
+      head_ = second_head;
+      current = second_head;
+      second_head = second_head->next;
+    }
+    
+    /* Сливаем оставшиеся элементы */
+    while (first != nullptr && second_head != nullptr) {
+      if (first->value <= second_head->value) {
+        current->next = first;
+        first->prev = current;
+        current = first;
+        first = first->next;
+      } else {
+        current->next = second_head;
+        second_head->prev = current;
+        current = second_head;
+        second_head = second_head->next;
+      }
+    }
+    
+    /* Добавляем оставшиеся элементы */
+    if (first != nullptr) {
+      current->next = first;
+      first->prev = current;
+      tail_ = first;
+      while (tail_->next != nullptr) {
+        tail_ = tail_->next;
+      }
+    } else if (second_head != nullptr) {
+      current->next = second_head;
+      second_head->prev = current;
+      tail_ = second_head;
+      while (tail_->next != nullptr) {
+        tail_ = tail_->next;
+      }
+    }
+    
+    /* Обновляем размер */
+    size_ += second.size_;
+    
+    /* Очищаем второй список */
+    second.head_ = nullptr;
+    second.tail_ = nullptr;
+    second.size_ = 0;
   }
+
+  /* Операторы сравнения */
+  bool operator==(const list& other) const noexcept {
+    if (size_ != other.size_) return false;
+    Node* current1 = head_;
+    Node* current2 = other.head_;
+    while (current1 != nullptr) {
+      if (current1->value != current2->value) return false;
+      current1 = current1->next;
+      current2 = current2->next;
+    }
+    return true;
+  }
+
+  bool operator!=(const list& other) const noexcept {
+    return !(*this == other);
+  }
+
+  bool operator<(const list& other) const noexcept {
+    Node* current1 = head_;
+    Node* current2 = other.head_;
+    while (current1 != nullptr && current2 != nullptr) {
+      if (current1->value < current2->value) return true;
+      if (current1->value > current2->value) return false;
+      current1 = current1->next;
+      current2 = current2->next;
+    }
+    return size_ < other.size_;
+  }
+
+  bool operator>(const list& other) const noexcept {
+    return other < *this;
+  }
+
+  bool operator<=(const list& other) const noexcept {
+    return !(other < *this);
+  }
+
+  bool operator>=(const list& other) const noexcept {
+    return !(*this < other);
+  }
+
+  /* Операторы инкремента и декремента */
+  iterator& operator++() noexcept {
+    if (head_) head_ = head_->next;
+    return *this;
+  }
+
+  iterator operator++(int) noexcept {
+    iterator temp = head_;
+    if (head_) head_ = head_->next;
+    return temp;
+  }
+
+  iterator& operator--() noexcept {
+    if (head_) head_ = head_->prev;
+    return *this;
+  }
+
+  iterator operator--(int) noexcept {
+    iterator temp = head_;
+    if (head_) head_ = head_->prev;
+    return temp;
+  }
+
+  /* Операторы сложения и вычитания */
+  list operator+(const list& other) const noexcept {
+    list result(*this);
+    Node* current = other.head_;
+    while (current != nullptr) {
+      result.push_back(current->value);
+      current = current->next;
+    }
+    return result;
+  }
+
+  list& operator+=(const list& other) noexcept {
+    Node* current = other.head_;
+    while (current != nullptr) {
+        push_back(current->value);
+        current = current->next;
+    }
+    return *this;
+}
+
+  list operator-(const list& other) const noexcept {
+    list result(*this);
+    Node* current = other.head_;
+    while (current != nullptr) {
+        bool removed = false; 
+        Node* temp = result.head_;
+        Node* prev = nullptr;
+        while (temp != nullptr && !removed) {
+            if (temp->value == current->value) {
+                Node* to_delete = temp;
+                if (temp == result.head_) {
+                    result.head_ = temp->next;
+                }
+                if (temp == result.tail_) {
+                    result.tail_ = temp->prev;
+                }
+                if (temp->prev) {
+                    temp->prev->next = temp->next;
+                }
+                if (temp->next) {
+                    temp->next->prev = temp->prev;
+                }
+                temp = temp->next;
+                delete to_delete;
+                result.size_--;
+                removed = true; 
+            } else {
+                temp = temp->next;
+            }
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+  list& operator-=(const list& other) noexcept {
+    Node* current = other.head_;
+    while (current != nullptr) {
+        Node* temp = head_;
+        while (temp != nullptr) {
+            if (temp->value == current->value) {
+                Node* to_delete = temp;
+                if (temp == head_) head_ = temp->next;
+                if (temp == tail_) tail_ = temp->prev;
+                if (temp->prev) temp->prev->next = temp->next;
+                if (temp->next) temp->next->prev = temp->prev;
+                temp = temp->next;
+                delete to_delete;
+                size_--;
+                break;
+            }
+            temp = temp->next;
+        }
+        current = current->next;
+    }
+    return *this;
+}
 };
 
 };  // namespace S21
