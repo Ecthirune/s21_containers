@@ -40,6 +40,53 @@ private:
     }
   }
 
+  std::pair<Node *, bool> insert(const value_type &val) {
+    Node *current = root_;
+    Node *parent = nullptr;
+    bool value_not_exists = true;
+    int direction = 0; /* 0 - левый потомок, 1 - правый потомок*/
+
+    /* поиск ноды с пустыми потомками */
+    while (current != nullptr && value_not_exists) {
+      parent = current;
+      if (val.first < current->data.first) {
+        current = current->links[0];
+        direction = 0;
+      } else if (val.first > current->data.first) {
+        current = current->links[1];
+        direction = 1;
+      } else {
+        value_not_exists = false;
+      }
+    }
+
+    Node *new_node = nullptr;
+    if (value_not_exists) {
+      new_node = new Node(val, true);
+      new_node->parent = parent;
+      size_++;
+
+      if (parent == nullptr) {
+        root_ = new_node;
+      } else if (direction) {
+        parent->links[1] = new_node;
+      } else {
+        parent->links[0] = new_node;
+      }
+      balance_tree(new_node);
+    } else {
+      new_node = current;
+    }
+    return {new_node, value_not_exists};
+  }
+
+  void balance_tree(Node *current) {
+    if (current->parent.is_red) {
+      current.is_red = false;
+    }
+    
+  }
+
 public:
   /* стандартный конструктор */
   map() : root_(nullptr), size_(0){};
