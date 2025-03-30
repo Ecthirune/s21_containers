@@ -40,51 +40,133 @@ private:
     }
   }
 
-  std::pair<Node *, bool> insert(const value_type &val) {
-    Node *current = root_;
-    Node *parent = nullptr;
-    bool value_not_exists = true;
-    int direction = 0; /* 0 - левый потомок, 1 - правый потомок*/
-
-    /* поиск ноды с пустыми потомками */
-    while (current != nullptr && value_not_exists) {
-      parent = current;
-      if (val.first < current->data.first) {
-        current = current->links[0];
-        direction = 0;
-      } else if (val.first > current->data.first) {
-        current = current->links[1];
-        direction = 1;
-      } else {
-        value_not_exists = false;
-      }
+  Node* copy_node(Node* node, Node* parent) {
+    if (node == nullptr) {
+      return nullptr;
     }
-
-    Node *new_node = nullptr;
-    if (value_not_exists) {
-      new_node = new Node(val, true);
-      new_node->parent = parent;
-      size_++;
-
-      if (parent == nullptr) {
-        root_ = new_node;
-      } else if (direction) {
-        parent->links[1] = new_node;
-      } else {
-        parent->links[0] = new_node;
-      }
-      balance_tree(new_node);
-    } else {
-      new_node = current;
-    }
-    return {new_node, value_not_exists};
+    Node* new_node = new Node(node->data, node->is_red);
+    new_node->parent = parent;
+    new_node->links[0] = copy_node(node->links[0], new_node);
+    new_node->links[1] = copy_node(node->links[1], new_node);
+    return new_node;
   }
 
+  
+
   void balance_tree(Node *current) {
-    if (current->parent.is_red) {
-      current.is_red = false;
+    if (current == nullptr) {
+      return;
+    }
+
+    bool balancing_complete = false;
+    
+    while (!balancing_complete && current->parent != nullptr) {
+      Node *parent = current->parent;
+      Node *grandparent = parent->parent;
+      
+      if (parent->is_red) {
+        if (grandparent == nullptr) {
+          parent->is_red = false;
+          balancing_complete = true;
+        } else {
+          Node *uncle = nullptr;
+          if (parent == grandparent->links[0]) {
+            uncle = grandparent->links[1];
+          } else {
+            uncle = grandparent->links[0];
+          }
+          
+          if (uncle != nullptr && uncle->is_red) {
+            parent->is_red = false;
+            uncle->is_red = false;
+            grandparent->is_red = true;
+            current = grandparent;
+          } else {
+            bool is_left_case = current == parent->links[0];
+            bool parent_is_left = parent == grandparent->links[0];
+            
+            if (!is_left_case && parent_is_left) {
+              rotate_left(parent);
+              current = parent;
+              parent = current->parent;
+            } else if (is_left_case && !parent_is_left) {
+              rotate_right(parent);
+              current = parent;
+              parent = current->parent;
+            }
+            
+            parent->is_red = false;
+            grandparent->is_red = true;
+            
+            if (current == parent->links[0]) {
+              rotate_right(grandparent);
+            } else {
+              rotate_left(grandparent);
+            }
+            
+            balancing_complete = true;
+          }
+        }
+      } else {
+        balancing_complete = true;
+      }
     }
     
+    if (root_ != nullptr) {
+      root_->is_red = false;
+    }
+  }
+
+  void rotate_left(Node *node) {
+    if (node == nullptr || node->links[1] == nullptr) {
+      return;
+    }
+
+    Node *right = node->links[1];
+    node->links[1] = right->links[0];
+    
+    if (right->links[0] != nullptr) {
+      right->links[0]->parent = node;
+    }
+    
+    right->parent = node->parent;
+    
+    if (node->parent == nullptr) {
+      root_ = right;
+    } else if (node == node->parent->links[0]) {
+      node->parent->links[0] = right;
+    } else {
+      node->parent->links[1] = right;
+    }
+    
+    right->links[0] = node;
+    node->parent = right;
+  }
+
+  void rotate_right(Node *node) {
+    if (node == nullptr || node->links[0] == nullptr) {
+      return;
+    }
+
+    Node *left = node->links[0];
+    node->links[0] = left->links[1];
+    
+    if (left->links[1] != nullptr) {
+      left->links[1]->parent = node;
+    }
+    
+    left->parent = node->parent;
+    
+    if (node->parent == nullptr) {
+      root_ = left;
+    } else if (node == node->parent->links[1]) {
+      node->parent->links[1] = left;
+    } else {
+      node->parent->links[0] = left;
+    }
+    
+    left->links[1] = node;
+    node->parent = left;
   }
 
 public:
@@ -137,6 +219,40 @@ public:
 
   size_type max_size() const noexcept {
     return std::numeric_limits<size_type>::max();
+  }
+
+  std::pair<Node *, bool> insert(const value_type &val) {
+    Node *current = root_;
+    Node *parent = nullptr;
+    bool value_not_exists = true;
+    bool direction = false; /* false - левый потомок, true - правый потомок*/
+
+    while (current != nullptr && value_not_exists) {
+      parent = current;
+      direction = val.first > current->data.first;
+      if (val.first == current->data.first) {
+        value_not_exists = false;
+      } else {
+        current = current->links[direction];
+      }
+    }
+
+    Node *new_node = nullptr;
+    if (value_not_exists) {
+      new_node = new Node(val, true);
+      new_node->parent = parent;
+      size_++;
+
+      if (parent == nullptr) {
+        root_ = new_node;
+      } else {
+        parent->links[direction] = new_node;
+      }
+      balance_tree(new_node);
+    } else {
+      new_node = current;
+    }
+    return {new_node, value_not_exists};
   }
 };
 } // namespace s21
