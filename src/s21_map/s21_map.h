@@ -12,28 +12,32 @@ public:
   using value_type = std::pair<const key_type, mapped_type>;
   using reference = value_type &;
   using const_reference = const value_type &;
-  // using iterator =
-  // using const_iterator =
   using size_type = size_t;
 
 private:
+
+
   struct Node {
     value_type data;
     Node *parent;
     Node *links[2];
     bool is_red;
+    Node() : data{Key{}, T{}}, parent(nullptr), links{nullptr, nullptr}, is_red(false) {}
     Node(const value_type &val, bool is_red = true)
-        : data(val), parent(nullptr), links{nullptr, nullptr}, is_red(is_red) {}
+        : data(val), parent(nullptr), links{nullptr, nullptr}, is_red(is_red) {
+        links[0] = &sentinel_;
+        links[1] = &sentinel_;
+    }
   };
 
-  struct Sentinel {
-    // fake node
-  };
+  inline static Node sentinel_{};
+
+
   Node *root_;
   size_type size_;
 
   void delete_node(Node *node) {
-    if (node) {
+    if (node && node != &sentinel_) {
       delete_node(node->links[0]);
       delete_node(node->links[1]);
       delete node;
@@ -41,8 +45,8 @@ private:
   }
 
   Node* copy_node(Node* node, Node* parent) {
-    if (node == nullptr) {
-      return nullptr;
+    if (node == nullptr || node == &sentinel_) {
+      return &sentinel_;
     }
     Node* new_node = new Node(node->data, node->is_red);
     new_node->parent = parent;
@@ -51,10 +55,8 @@ private:
     return new_node;
   }
 
-  
-
   void balance_tree(Node *current) {
-    if (current == nullptr) {
+    if (current == nullptr || current == &sentinel_) {
       return;
     }
 
@@ -76,7 +78,7 @@ private:
             uncle = grandparent->links[0];
           }
           
-          if (uncle != nullptr && uncle->is_red) {
+          if (uncle != &sentinel_ && uncle->is_red) {
             parent->is_red = false;
             uncle->is_red = false;
             grandparent->is_red = true;
@@ -118,14 +120,14 @@ private:
   }
 
   void rotate_left(Node *node) {
-    if (node == nullptr || node->links[1] == nullptr) {
+    if (node == nullptr || node->links[1] == &sentinel_) {
       return;
     }
 
     Node *right = node->links[1];
     node->links[1] = right->links[0];
     
-    if (right->links[0] != nullptr) {
+    if (right->links[0] != &sentinel_) {
       right->links[0]->parent = node;
     }
     
@@ -144,14 +146,14 @@ private:
   }
 
   void rotate_right(Node *node) {
-    if (node == nullptr || node->links[0] == nullptr) {
+    if (node == nullptr || node->links[0] == &sentinel_) {
       return;
     }
 
     Node *left = node->links[0];
     node->links[0] = left->links[1];
     
-    if (left->links[1] != nullptr) {
+    if (left->links[1] != &sentinel_) {
       left->links[1]->parent = node;
     }
     
@@ -170,6 +172,189 @@ private:
   }
 
 public:
+  class MapIterator {
+  private:
+      Node* current_;
+      Node* root_;
+      bool is_end_;
+
+      Node* find_min(Node* node) {
+          Node* result = &sentinel_;
+          if (node != nullptr && node != &sentinel_) {
+              result = node;
+              while (result->links[0] != &sentinel_) {
+                  result = result->links[0];
+              }
+          }
+          return result;
+      }
+
+      Node* find_max(Node* node) {
+          Node* result = &sentinel_;
+          if (node != nullptr && node != &sentinel_) {
+              result = node;
+              while (result->links[1] != &sentinel_) {
+                  result = result->links[1];
+              }
+          }
+          return result;
+      }
+
+      Node* find_next(Node* node) {
+          Node* result = &sentinel_;
+          
+          if (node != nullptr && node != &sentinel_) {
+              if (node->links[1] != &sentinel_) {
+                  result = find_min(node->links[1]);
+              } else {
+                  Node* parent = node->parent;
+                  while (parent != nullptr && node == parent->links[1]) {
+                      node = parent;
+                      parent = parent->parent;
+                  }
+                  result = parent != nullptr ? parent : &sentinel_;
+              }
+          }
+          
+          return result;
+      }
+
+      Node* find_prev(Node* node) {
+          Node* result = &sentinel_;
+          
+          if (node == nullptr || node == &sentinel_) {
+              result = find_max(root_);
+          } else if (node->links[0] != &sentinel_) {
+              result = find_max(node->links[0]);
+          } else {
+              Node* parent = node->parent;
+              while (parent != nullptr && node == parent->links[0]) {
+                  node = parent;
+                  parent = parent->parent;
+              }
+              result = parent != nullptr ? parent : &sentinel_;
+          }
+          
+          return result;
+      }
+
+  public:
+      struct iterator_category {
+          static constexpr bool is_bidirectional = true;
+      };
+      using value_type = std::pair<const Key, T>;
+      using difference_type = long long;
+      using pointer = value_type*;
+      using reference = value_type&;
+
+      MapIterator() : current_(&sentinel_), root_(nullptr), is_end_(true) {}
+      
+      MapIterator(Node* node, Node* root) 
+          : current_(node), root_(root), is_end_(node == &sentinel_) {}
+
+      MapIterator(const MapIterator& other) 
+          : current_(other.current_), root_(other.root_), is_end_(other.is_end_) {}
+
+      MapIterator& operator=(const MapIterator& other) {
+          if (this != &other) {
+              current_ = other.current_;
+              root_ = other.root_;
+              is_end_ = other.is_end_;
+          }
+          return *this;
+      }
+
+      reference operator*() {
+          reference result = current_->data;
+          if (current_ == &sentinel_) {
+              throw std::out_of_range("Выход за границы контейнера");
+          }
+          return result;
+      }
+
+      pointer operator->() {
+          pointer result = &(current_->data);
+          if (current_ == &sentinel_) {
+              throw std::out_of_range("Выход за границы контейнера");
+          }
+          return result;
+      }
+
+      MapIterator& operator++() {
+          if (!is_end_) {
+              current_ = find_next(current_);
+              is_end_ = (current_ == &sentinel_);
+          }
+          return *this;
+      }
+
+      MapIterator operator++(int) {
+          MapIterator temp(*this);
+          ++(*this);
+          return temp;
+      }
+
+      MapIterator& operator--() {
+          if (is_end_) {
+              current_ = find_max(root_);
+              is_end_ = false;
+          } else {
+              current_ = find_prev(current_);
+              is_end_ = (current_ == &sentinel_);
+          }
+          return *this;
+      }
+
+      MapIterator operator--(int) {
+          MapIterator temp(*this);
+          --(*this);
+          return temp;
+      }
+
+      bool operator==(const MapIterator& other) const {
+          bool result = current_ == other.current_;
+          return result;
+      }
+
+      bool operator!=(const MapIterator& other) const {
+          bool result = !(*this == other);
+          return result;
+      }
+  };
+
+  using iterator = MapIterator;
+  using const_iterator = const MapIterator;
+
+  iterator begin() { 
+    if (root_ == nullptr) {
+      return end();
+    }
+    Node* current = root_;
+    while (current->links[0] != &sentinel_) {
+      current = current->links[0];
+    }
+    return MapIterator(current, root_);
+  }
+
+  const_iterator begin() const { 
+    if (root_ == nullptr) {
+      return end();
+    }
+    Node* current = root_;
+    while (current->links[0] != &sentinel_) {
+      current = current->links[0];
+    }
+    return MapIterator(current, root_);
+  }
+
+  const_iterator cbegin() const { 
+    return begin();
+  }
+
+  iterator end() { return MapIterator(&sentinel_, root_); }
+  const_iterator end() const { return MapIterator(&sentinel_, root_); }  
+  const_iterator cend() const { return end(); }
+
   /* стандартный конструктор */
   map() : root_(nullptr), size_(0){};
 
@@ -209,7 +394,6 @@ public:
     return *this;
   };
 
-public:
   /* деструктор */
   ~map() { delete_node(root_); }
 
@@ -221,15 +405,39 @@ public:
     return std::numeric_limits<size_type>::max();
   }
 
-  std::pair<Node *, bool> insert(const value_type &val) {
+  std::pair<iterator, bool> insert_or_assign(const Key& key, const T& obj) {
+    bool inserted = false;
+    iterator result = MapIterator(nullptr, root_);
+    
+    auto it = find(key);
+    if (it != end()) {
+      it->second = obj;
+      result = it;
+    } else {
+      value_type val = {key, obj};
+      auto [new_it, success] = insert(val);
+      result = new_it;
+      inserted = success;
+    }
+    
+    return {result, inserted};
+  }
+
+  std::pair<iterator, bool> insert(const Key& key, const T& obj) {
+    value_type val = {key, obj};
+    return insert(val);
+  }
+
+  std::pair<iterator, bool> insert(const value_type &val) {
     Node *current = root_;
     Node *parent = nullptr;
     bool value_not_exists = true;
-    bool direction = false; /* false - левый потомок, true - правый потомок*/
+    bool direction = false;
 
-    while (current != nullptr && value_not_exists) {
+    while (current != nullptr && current != &sentinel_ && value_not_exists) {
       parent = current;
       direction = val.first > current->data.first;
+      
       if (val.first == current->data.first) {
         value_not_exists = false;
       } else {
@@ -248,11 +456,40 @@ public:
       } else {
         parent->links[direction] = new_node;
       }
+      
       balance_tree(new_node);
     } else {
       new_node = current;
     }
-    return {new_node, value_not_exists};
+    return {MapIterator(new_node, root_), value_not_exists};
+  }
+
+  iterator find(const Key& key) {
+    Node *current = root_;
+    while (current != nullptr && current != &sentinel_) {
+      if (key < current->data.first) {
+        current = current->links[0];
+      } else if (key > current->data.first) {
+        current = current->links[1];
+      } else {
+        return MapIterator(current, root_);
+      }
+    }
+    return end();
+  }
+
+  const_iterator find(const Key& key) const {
+    Node *current = root_;
+    while (current != nullptr && current != &sentinel_) {
+      if (key < current->data.first) {
+        current = current->links[0];
+      } else if (key > current->data.first) {
+        current = current->links[1];
+      } else {
+        return MapIterator(current, root_);
+      }
+    }
+    return end();
   }
 };
 } // namespace s21
