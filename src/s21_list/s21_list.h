@@ -1,3 +1,6 @@
+#ifndef S21_LIST_H
+#define S21_LIST_H
+
 #include <cstddef>
 #include <initializer_list>
 #include <limits>
@@ -616,3 +619,5 @@ class list {
 };
 
 };  // namespace S21
+
+#endif  // S21_LIST_H
