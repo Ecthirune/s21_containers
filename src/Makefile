@@ -3,16 +3,18 @@ CFLAGS =
 TESTFLAGS = -lgtest -lgtest_main -g -fno-elide-constructors
 TEST_EXE = test_runner.out
 
-CONTAINERS = list vector deque
-TEST_SRC = $(wildcard tests/*_test.c)
-TEST_OBJ = $(TEST_SRC:.c=.o)
+CONTAINERS = list vector deque map
+TEST_SRC = $(wildcard tests/*_test.cpp)
+TEST_OBJ = $(TEST_SRC:.cpp=.o)
+SRC_SRC = $(wildcard s21_*/s21_*.h)
+SRC_OBJ = $(SRC_SRC:.h=.o)
 
 .PHONY: all test clean
 .DEFAULT_GOAL := all
 
 all: test
 
-$(TEST_OBJ): %.o: %.c
+$(TEST_OBJ): %.o: %.cpp
 	$(COMPILER) $(CFLAGS) -c $< -o $@
 
 test: $(TEST_OBJ)
