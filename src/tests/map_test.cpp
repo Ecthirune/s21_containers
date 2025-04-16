@@ -691,21 +691,10 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Left_Child) {
     if (it12 != m.end()) it12.getCurrent()->is_black = false;
     if (it17 != m.end()) it17.getCurrent()->is_black = true;
     
-    // Выводим структуру дерева до удаления
-    std::cout << "Tree structure before deletion:" << std::endl;
-    for (auto it = m.begin(); it != m.end(); ++it) {
-        std::cout << "Key: " << it->first << ", Color: " << (it.getCurrent()->is_black ? "black" : "red") << std::endl;
-    }
-    
     // Удаляем узел 3 (черный лист)
     m.erase(it3);
     
-    // Выводим структуру дерева после удаления
-    std::cout << "Tree structure after deletion:" << std::endl;
-    for (auto it = m.begin(); it != m.end(); ++it) {
-        std::cout << "Key: " << it->first << ", Color: " << (it.getCurrent()->is_black ? "black" : "red") << std::endl;
-    }
-    
+   
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 6);
     EXPECT_FALSE(m.contains(3));
@@ -821,85 +810,3 @@ TEST(MapTest, Fix_Delete_Complex_Case) {
     EXPECT_TRUE(m.contains(17));
     EXPECT_TRUE(m.contains(18));
 }
-
-TEST(MapTest, Fix_Delete_Red_Sibling_Detailed) {
-    s21::map<int, std::string> m;
-    
-    // Создаем структуру, где у удаляемого узла будет красный брат
-    m.insert({10, "ten"});     // черный корень
-    m.insert({5, "five"});     // красный левый ребенок
-    m.insert({15, "fifteen"}); // черный правый ребенок
-    m.insert({3, "three"});    // черный левый ребенок
-    m.insert({7, "seven"});    // черный правый ребенок
-    m.insert({12, "twelve"});  // красный левый ребенок
-    m.insert({17, "seventeen"}); // черный правый ребенок
-    
-    // Принудительно устанавливаем цвета
-    auto it10 = m.find(10);
-    auto it5 = m.find(5);
-    auto it15 = m.find(15);
-    auto it3 = m.find(3);
-    auto it7 = m.find(7);
-    auto it12 = m.find(12);
-    auto it17 = m.find(17);
-    
-    if (it10 != m.end()) it10.getCurrent()->is_black = true;
-    if (it5 != m.end()) it5.getCurrent()->is_black = false;
-    if (it15 != m.end()) it15.getCurrent()->is_black = true;
-    if (it3 != m.end()) it3.getCurrent()->is_black = true;
-    if (it7 != m.end()) it7.getCurrent()->is_black = true;
-    if (it12 != m.end()) it12.getCurrent()->is_black = false;
-    if (it17 != m.end()) it17.getCurrent()->is_black = true;
-    
-    // Выводим структуру дерева до удаления
-    std::cout << "Tree structure before deletion:" << std::endl;
-    for (auto it = m.begin(); it != m.end(); ++it) {
-        std::cout << "Key: " << it->first << ", Color: " << (it.getCurrent()->is_black ? "black" : "red") << std::endl;
-    }
-    
-    // Удаляем узел 3 (черный лист)
-    m.erase(it3);
-    
-    // Выводим структуру дерева после удаления
-    std::cout << "Tree structure after deletion:" << std::endl;
-    for (auto it = m.begin(); it != m.end(); ++it) {
-        std::cout << "Key: " << it->first << ", Color: " << (it.getCurrent()->is_black ? "black" : "red") << std::endl;
-    }
-    
-    // Проверяем, что дерево остается сбалансированным
-    EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(3));
-    
-    // Проверяем, что все остальные элементы доступны
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(10));
-    EXPECT_TRUE(m.contains(12));
-    EXPECT_TRUE(m.contains(15));
-    EXPECT_TRUE(m.contains(17));
-    
-    // Проверяем, что структура дерева корректна после удаления
-    it5 = m.find(5);
-    it7 = m.find(7);
-    it10 = m.find(10);
-    it15 = m.find(15);
-    it12 = m.find(12);
-    it17 = m.find(17);
-    
-    // Проверяем связи между узлами
-    EXPECT_NE(it5, m.end());
-    EXPECT_NE(it7, m.end());
-    EXPECT_NE(it10, m.end());
-    EXPECT_NE(it15, m.end());
-    EXPECT_NE(it12, m.end());
-    EXPECT_NE(it17, m.end());
-    
-    // Проверяем, что порядок элементов сохранился
-    std::vector<int> expected_order = {5, 7, 10, 12, 15, 17};
-    std::vector<int> actual_order;
-    for (auto it = m.begin(); it != m.end(); ++it) {
-        actual_order.push_back(it->first);
-    }
-    EXPECT_EQ(actual_order, expected_order);
-}
-
