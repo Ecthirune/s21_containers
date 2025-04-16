@@ -5,7 +5,7 @@
 #include <limits>
 #include <memory>
 
-namespace S21 {
+namespace s21 {
 
 template <typename T>
 class vector {

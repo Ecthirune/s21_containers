@@ -3,13 +3,13 @@
 #include "../s21_vector/s21_vector.h"
 
 TEST(MapTest, Default_constructor) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     EXPECT_TRUE(m.empty());
     EXPECT_EQ(m.size(), 0);
 }
 
 TEST(MapTest, Initializer_List_Constructor) {
-    S21::map<int, std::string> m = {
+    s21::map<int, std::string> m = {
         {1, "one"},
         {2, "two"},
         {3, "three"}
@@ -21,16 +21,16 @@ TEST(MapTest, Initializer_List_Constructor) {
 }
 
 TEST(MapTest, Copy_Constructor) {
-    S21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
-    S21::map<int, std::string> m2(m1);
+    s21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m2(m1);
     EXPECT_EQ(m2.size(), 2);
     EXPECT_EQ(m2[1], "one");
     EXPECT_EQ(m2[2], "two");
 }
 
 TEST(MapTest, Move_Constructor) {
-    S21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
-    S21::map<int, std::string> m2(std::move(m1));
+    s21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m2(std::move(m1));
     EXPECT_EQ(m2.size(), 2);
     EXPECT_EQ(m2[1], "one");
     EXPECT_EQ(m2[2], "two");
@@ -38,7 +38,7 @@ TEST(MapTest, Move_Constructor) {
 }
 
 TEST(MapTest, Insert) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     auto result = m.insert({1, "one"});
     EXPECT_TRUE(result.second);
     EXPECT_EQ(result.first->first, 1);
@@ -50,7 +50,7 @@ TEST(MapTest, Insert) {
 }
 
 TEST(MapTest, Insert_Or_Assign) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     auto result = m.insert_or_assign(1, "one");
     EXPECT_TRUE(result.second);
     EXPECT_EQ(m[1], "one");
@@ -61,7 +61,7 @@ TEST(MapTest, Insert_Or_Assign) {
 }
 
 TEST(MapTest, Erase) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.find(2);
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
@@ -69,15 +69,15 @@ TEST(MapTest, Erase) {
 }
 
 TEST(MapTest, Clear) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     m.clear();
     EXPECT_TRUE(m.empty());
     EXPECT_EQ(m.size(), 0);
 }
 
 TEST(MapTest, Swap) {
-    S21::map<int, std::string> m1 = {{1, "one"}};
-    S21::map<int, std::string> m2 = {{2, "two"}};
+    s21::map<int, std::string> m1 = {{1, "one"}};
+    s21::map<int, std::string> m2 = {{2, "two"}};
     m1.swap(m2);
     EXPECT_EQ(m1.size(), 1);
     EXPECT_EQ(m2.size(), 1);
@@ -86,8 +86,8 @@ TEST(MapTest, Swap) {
 }
 
 TEST(MapTest, Merge) {
-    S21::map<int, std::string> m1 = {{1, "one"}};
-    S21::map<int, std::string> m2 = {{2, "two"}};
+    s21::map<int, std::string> m1 = {{1, "one"}};
+    s21::map<int, std::string> m2 = {{2, "two"}};
     m1.merge(m2);
     EXPECT_EQ(m1.size(), 2);
     EXPECT_EQ(m1[1], "one");
@@ -96,26 +96,26 @@ TEST(MapTest, Merge) {
 }
 
 TEST(MapTest, Contains) {
-    S21::map<int, std::string> m = {{1, "one"}};
+    s21::map<int, std::string> m = {{1, "one"}};
     EXPECT_TRUE(m.contains(1));
     EXPECT_FALSE(m.contains(2));
 }
 
 TEST(MapTest, At) {
-    S21::map<int, std::string> m = {{1, "one"}};
+    s21::map<int, std::string> m = {{1, "one"}};
     EXPECT_EQ(m.at(1), "one");
     EXPECT_THROW(m.at(2), std::out_of_range);
 }
 
 TEST(MapTest, Operator_Brackets) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     m[1] = "one";
     EXPECT_EQ(m[1], "one");
     EXPECT_EQ(m[2], ""); // Должен создать элемент с пустым значением
 }
 
 TEST(MapTest, Iterator) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     int count = 0;
     for (auto it = m.begin(); it != m.end(); ++it) {
         count++;
@@ -124,7 +124,7 @@ TEST(MapTest, Iterator) {
 }
 
 TEST(MapTest, Const_Iterator) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     int count = 0;
     for (auto it = m.begin(); it != m.end(); ++it) {
         count++;
@@ -133,19 +133,19 @@ TEST(MapTest, Const_Iterator) {
 }
 
 TEST(MapTest, Max_Size) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     EXPECT_GT(m.max_size(), 0);
 }
 
 TEST(MapTest, Empty) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     EXPECT_TRUE(m.empty());
     m[1] = "one";
     EXPECT_FALSE(m.empty());
 }
 
 TEST(MapTest, Size) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     EXPECT_EQ(m.size(), 0);
     m[1] = "one";
     EXPECT_EQ(m.size(), 1);
@@ -154,7 +154,7 @@ TEST(MapTest, Size) {
 }
 
 TEST(MapTest, Find) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     auto it = m.find(1);
     EXPECT_NE(it, m.end());
     EXPECT_EQ(it->first, 1);
@@ -165,7 +165,7 @@ TEST(MapTest, Find) {
 }
 
 TEST(MapTest, Const_Find) {
-    const S21::map<int, std::string> m = {{1, "one"}};
+    const s21::map<int, std::string> m = {{1, "one"}};
     auto it = m.find(1);
     EXPECT_NE(it, m.end());
     EXPECT_EQ(it->first, 1);
@@ -173,16 +173,16 @@ TEST(MapTest, Const_Find) {
 }
 
 TEST(MapTest, Assignment_Operator) {
-    S21::map<int, std::string> m1 = {{1, "one"}};
-    S21::map<int, std::string> m2;
+    s21::map<int, std::string> m1 = {{1, "one"}};
+    s21::map<int, std::string> m2;
     m2 = m1;
     EXPECT_EQ(m2.size(), 1);
     EXPECT_EQ(m2[1], "one");
 }
 
 TEST(MapTest, Move_Assignment_Operator) {
-    S21::map<int, std::string> m1 = {{1, "one"}};
-    S21::map<int, std::string> m2;
+    s21::map<int, std::string> m1 = {{1, "one"}};
+    s21::map<int, std::string> m2;
     m2 = std::move(m1);
     EXPECT_EQ(m2.size(), 1);
     EXPECT_EQ(m2[1], "one");
@@ -190,7 +190,7 @@ TEST(MapTest, Move_Assignment_Operator) {
 }
 
 TEST(MapTest, Rotate_Right) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     
     // Создаем ситуацию для правостороннего вращения
     // Вставляем элементы в определенном порядке
@@ -227,8 +227,8 @@ TEST(MapTest, Rotate_Right) {
 }
 
 TEST(MapTest, Assignment_Operator_With_Empty_Map) {
-    S21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
-    S21::map<int, std::string> m2; // пустой map
+    s21::map<int, std::string> m1 = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m2; // пустой map
     
     // Присваиваем пустой map
     m1 = m2;
@@ -247,7 +247,7 @@ TEST(MapTest, Assignment_Operator_With_Empty_Map) {
 }
 
 TEST(MapTest, Erase_Leaf_Node) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.find(3); // листовой узел
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
@@ -257,7 +257,7 @@ TEST(MapTest, Erase_Leaf_Node) {
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем ситуацию, когда узел имеет только левого потомка
     m.insert({3, "three"});
     m.insert({2, "two"});
@@ -271,7 +271,7 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only) {
 }
 
 TEST(MapTest, Erase_Node_With_Right_Child_Only) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем ситуацию, когда узел имеет только правого потомка
     m.insert({1, "one"});
     m.insert({2, "two"});
@@ -285,7 +285,7 @@ TEST(MapTest, Erase_Node_With_Right_Child_Only) {
 }
 
 TEST(MapTest, Erase_Node_With_Both_Children) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем ситуацию, когда узел имеет обоих потомков
     m.insert({4, "four"});
     m.insert({2, "two"});
@@ -309,7 +309,7 @@ TEST(MapTest, Erase_Node_With_Both_Children) {
 }
 
 TEST(MapTest, Erase_Root_Node) {
-    S21::map<int, std::string> m = {{1, "one"}};
+    s21::map<int, std::string> m = {{1, "one"}};
     auto it = m.begin();
     m.erase(it);
     EXPECT_TRUE(m.empty());
@@ -317,7 +317,7 @@ TEST(MapTest, Erase_Root_Node) {
 }
 
 TEST(MapTest, Erase_All_Elements) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     while (!m.empty()) {
         auto it = m.begin();
         m.erase(it);
@@ -327,7 +327,7 @@ TEST(MapTest, Erase_All_Elements) {
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_Complex) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем более сложную структуру с узлом, имеющим только левого потомка
     m.insert({5, "five"});
     m.insert({3, "three"});
@@ -351,7 +351,7 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Complex) {
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_At_Root) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем ситуацию, когда корневой узел имеет только левого потомка
     m.insert({2, "two"});
     m.insert({1, "one"});
@@ -365,7 +365,7 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_At_Root) {
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_Deep) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем глубокую структуру с узлом, имеющим только левого потомка
     m.insert({8, "eight"});
     m.insert({4, "four"});
@@ -391,7 +391,7 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Deep) {
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_Multiple) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем структуру с несколькими узлами, имеющими только левых потомков
     m.insert({5, "five"});
     m.insert({3, "three"});
@@ -419,7 +419,7 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Multiple) {
 }
 
 TEST(MapTest, Iterator_Pre_Decrement) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.end();
     --it;
     
@@ -436,7 +436,7 @@ TEST(MapTest, Iterator_Pre_Decrement) {
 }
 
 TEST(MapTest, Iterator_Post_Decrement) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.end();
     auto old_it = it--;
     
@@ -456,21 +456,21 @@ TEST(MapTest, Iterator_Post_Decrement) {
 }
 
 TEST(MapTest, Iterator_Decrement_From_Begin) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     auto it = m.begin();
     --it;
     EXPECT_EQ(it, m.end());
 }
 
 TEST(MapTest, Iterator_Decrement_Empty) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     auto it = m.begin();
     --it;
     EXPECT_EQ(it, m.end());
 }
 
 TEST(MapTest, Iterator_Decrement_Modify_Values) {
-    S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.end();
     --it;
     it->second = "modified_three";
@@ -485,7 +485,7 @@ TEST(MapTest, Iterator_Decrement_Modify_Values) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Increment_Basic) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.begin();
     auto old_it = it++;
     
@@ -496,7 +496,7 @@ TEST(MapTest, Const_Iterator_Post_Increment_Basic) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Increment_To_End) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     auto it = m.begin();
     auto old_it = it++;
     
@@ -512,7 +512,7 @@ TEST(MapTest, Const_Iterator_Post_Increment_To_End) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Increment_Empty) {
-    const S21::map<int, std::string> m;
+    const s21::map<int, std::string> m;
     auto it = m.begin();
     auto old_it = it++;
     
@@ -521,7 +521,7 @@ TEST(MapTest, Const_Iterator_Post_Increment_Empty) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Increment_Single_Element) {
-    const S21::map<int, std::string> m = {{1, "one"}};
+    const s21::map<int, std::string> m = {{1, "one"}};
     auto it = m.begin();
     auto old_it = it++;
     
@@ -531,7 +531,7 @@ TEST(MapTest, Const_Iterator_Post_Increment_Single_Element) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Increment_Sequence) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}};
     auto it = m.begin();
     
     auto it1 = it++;
@@ -552,7 +552,7 @@ TEST(MapTest, Const_Iterator_Post_Increment_Sequence) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Decrement_Basic) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}};
     auto it = m.end();
     auto old_it = it--;
     
@@ -562,7 +562,7 @@ TEST(MapTest, Const_Iterator_Post_Decrement_Basic) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Decrement_Sequence) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}};
     auto it = m.end();
     
     auto it1 = it--;
@@ -590,7 +590,7 @@ TEST(MapTest, Const_Iterator_Post_Decrement_Sequence) {
 }
 
 TEST(MapTest, Const_Iterator_Post_Decrement_From_Begin) {
-    const S21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
+    const s21::map<int, std::string> m = {{1, "one"}, {2, "two"}};
     auto it = m.begin();
     auto old_it = it--;
     
@@ -601,7 +601,7 @@ TEST(MapTest, Const_Iterator_Post_Decrement_From_Begin) {
 
 
 TEST(MapTest, Const_Iterator_Post_Decrement_Empty) {
-    const S21::map<int, std::string> m;
+    const s21::map<int, std::string> m;
     auto it = m.begin();
     auto old_it = it--;
     
@@ -610,7 +610,7 @@ TEST(MapTest, Const_Iterator_Post_Decrement_Empty) {
 }
 
 TEST(MapTest, Fix_Delete_Red_Sibling) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем структуру, где у удаляемого узла будет красный брат
     m.insert({5, "five"});
     m.insert({3, "three"});
@@ -636,7 +636,7 @@ TEST(MapTest, Fix_Delete_Red_Sibling) {
 }
 
 TEST(MapTest, Fix_Delete_Black_Sibling_With_Black_Children) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем структуру, где у удаляемого узла будет черный брат с черными детьми
     m.insert({5, "five"});
     m.insert({3, "three"});
@@ -662,7 +662,7 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Black_Children) {
 }
 
 TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Left_Child) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     
     // Создаем структуру, где у удаляемого узла будет черный брат
     // с красным левым ребенком и черным правым ребенком
@@ -744,7 +744,7 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Left_Child) {
 }
 
 TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Right_Child) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем структуру, где у удаляемого узла будет черный брат с красным правым ребенком
     m.insert({5, "five"});
     m.insert({3, "three"});
@@ -772,7 +772,7 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Right_Child) {
 }
 
 TEST(MapTest, Fix_Delete_Complex_Case) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     // Создаем сложную структуру для проверки всех случаев
     m.insert({10, "ten"});
     m.insert({5, "five"});
@@ -823,7 +823,7 @@ TEST(MapTest, Fix_Delete_Complex_Case) {
 }
 
 TEST(MapTest, Fix_Delete_Red_Sibling_Detailed) {
-    S21::map<int, std::string> m;
+    s21::map<int, std::string> m;
     
     // Создаем структуру, где у удаляемого узла будет красный брат
     m.insert({10, "ten"});     // черный корень

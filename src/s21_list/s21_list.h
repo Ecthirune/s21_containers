@@ -7,7 +7,7 @@
 #include <memory>
 #include <stdexcept>
 
-namespace S21 {
+namespace s21 {
 
 template <typename T>
 class list {

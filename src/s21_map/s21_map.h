@@ -6,7 +6,7 @@
 #include <utility>
 #include <iostream>
 
-namespace S21 {
+namespace s21 {
 
 template <typename Key, typename T>
 class map {
