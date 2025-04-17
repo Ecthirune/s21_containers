@@ -481,13 +481,13 @@ TEST(VectorIteratorTest, Comparison) {
 // Тесты для константных итераторов
 TEST(VectorConstIteratorTest, DefaultConstructionAndDereference) {
   const s21::vector<int> v = {1, 2, 3};
-  auto it = v.cbegin();
+  auto it = v.begin();
   EXPECT_EQ(*it, 1);  // Проверка разыменования
 }
 
 TEST(VectorConstIteratorTest, Increment) {
   const s21::vector<int> v = {1, 2, 3};
-  auto it = v.cbegin();
+  auto it = v.begin();
   ++it;  // Префиксный инкремент
   EXPECT_EQ(*it, 2);
   it++;  // Постфиксный инкремент
@@ -496,17 +496,17 @@ TEST(VectorConstIteratorTest, Increment) {
 
 TEST(VectorConstIteratorTest, Decrement) {
   const s21::vector<int> v = {1, 2, 3};
-  auto it = v.cend();
+  auto it = v.end();
   --it;  // Префиксный декремент
   EXPECT_EQ(*it, 3);
-  it = v.cbegin() + 2;
+  it = v.begin() + 2;
   it--;  // Постфиксный декремент
   EXPECT_EQ(*it, 2);
 }
 
 TEST(VectorConstIteratorTest, Arithmetic) {
   const s21::vector<int> v = {1, 2, 3, 4, 5};
-  auto it = v.cbegin();
+  auto it = v.begin();
   it = it + 2;  // Сдвиг вперед
   EXPECT_EQ(*it, 3);
   it = it - 1;  // Сдвиг назад
@@ -515,16 +515,16 @@ TEST(VectorConstIteratorTest, Arithmetic) {
 
 TEST(VectorConstIteratorTest, Difference) {
   const s21::vector<int> v = {1, 2, 3, 4, 5};
-  auto it1 = v.cbegin();
-  auto it2 = v.cend();
+  auto it1 = v.begin();
+  auto it2 = v.end();
   ptrdiff_t diff = it2 - it1;
-  EXPECT_EQ(diff, 5);  // Разность между cend() и cbegin() = размер вектора
+  EXPECT_EQ(diff, 5);  // Разность между end() и begin() = размер вектора
 }
 
 TEST(VectorConstIteratorTest, Comparison) {
   const s21::vector<int> v = {1, 2, 3};
-  auto it1 = v.cbegin();
-  auto it2 = v.cbegin();
+  auto it1 = v.begin();
+  auto it2 = v.begin();
   EXPECT_TRUE(it1 == it2);  // Равенство
   ++it1;
   EXPECT_TRUE(it1 != it2);  // Неравенство
@@ -558,7 +558,7 @@ TEST(VectorConstIteratorTest, FullConstIteration) {
   const s21::vector<int> v = {1, 2, 3, 4};
   int expected[] = {1, 2, 3, 4};
   int i = 0;
-  for (auto it = v.cbegin(); it != v.cend(); ++it) {
+  for (auto it = v.begin(); it != v.end(); ++it) {
     EXPECT_EQ(*it, expected[i++]);
   }
   EXPECT_EQ(i, 4);  // Убедимся, что прошли весь вектор

@@ -71,7 +71,7 @@ class vector {
     if (size_ > 0) {
       data_ = allocator_.allocate(capacity_);
       try {
-        std::uninitialized_copy(v.cbegin(), v.cend(), data_);
+        std::uninitialized_copy(v.begin(), v.end(), data_);
       } catch (...) {
         allocator_.deallocate(data_, capacity_);
         throw;
@@ -124,10 +124,12 @@ class vector {
   iterator begin() noexcept { return data_; }
   iterator end() noexcept { return data_ + size_; }
 
+  reference front() noexcept { return *data_; }
+  reference back() noexcept { return *(data_ + size_ - 1); }
   const_reference front() const noexcept { return *data_; }
   const_reference back() const noexcept { return *(data_ + size_ - 1); }
-  const_iterator cbegin() const noexcept { return data_; }
-  const_iterator cend() const noexcept { return data_ + size_; }
+  const_iterator begin() const noexcept { return data_; }
+  const_iterator end() const noexcept { return data_ + size_; }
 
   /* возврат ссылки на область памяти */
   value_type* data() const noexcept { return data_; }

@@ -2,8 +2,8 @@
 
 
 namespace s21 {
-template <typename T>
-class stack : public s21::vector<T> {
+    template <typename T, typename Container = s21::vector<T>> 
+    class stack {
 public:
     using value_type = T;
     using reference = value_type&;
@@ -11,41 +11,43 @@ public:
     using size_type = size_t;
 
     // Конструкторы
-    stack() : s21::vector<T>() {}
-    stack(std::initializer_list<value_type> const& items) : s21::vector<T>(items) {}
-    stack(const stack& s) : s21::vector<T>(s) {}
-    stack(stack&& s) noexcept : s21::vector<T>(std::move(s)) {}
+    stack( ) : container_() {};
+    explicit stack(std::initializer_list<value_type> const& items) : container_(items) {}
+    stack(const stack& s) : container_(s.container_) {}
+    stack(stack&& s) noexcept : container_(std::move(s.container_)) {}
     ~stack() = default;
 
     // Оператор присваивания
     stack& operator=(stack&& s) noexcept {
         if (this != &s) {
-            s21::vector<T>::operator=(std::move(s));
+            container_ =(std::move(s.container_));
         }
         return *this;
     }
 
     // Основные методы стека
     reference top() {
-        return this->back();
+        return container_.back();
     }
     const_reference top() const {
-        return this->back();
+        return container_.back();
     }
     bool empty() const {
-        return s21::vector<T>::empty(); 
+        return container_.empty();
     }
     size_type size() const {
-        return s21::vector<T>::size();
+        return container_.size();
     }
     void push(const_reference value) {
-        this->push_back(value); 
+        container_.push_back(value); 
     }
     void pop() {
-        this->pop_back(); 
+        container_.pop_back(); 
     }
     void swap(stack& other) {
-        s21::vector<T>::swap(other);
+        container_.swap(other.container_);
     }
+    private:
+        Container container_;
 };
 } // namespace s21
