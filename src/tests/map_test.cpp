@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "../s21_map/s21_map.h"
-#include "../s21_vector/s21_vector.h"
+#include <map>
 
 TEST(MapTest, Default_constructor) {
     s21::map<int, std::string> m;
@@ -35,6 +35,8 @@ TEST(MapTest, Move_Constructor) {
     EXPECT_EQ(m2[1], "one");
     EXPECT_EQ(m2[2], "two");
     EXPECT_TRUE(m1.empty());
+
+    
 }
 
 TEST(MapTest, Insert) {
@@ -65,7 +67,7 @@ TEST(MapTest, Erase) {
     auto it = m.find(2);
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(2));
+    EXPECT_TRUE(m.find(2) == m.end());
 }
 
 TEST(MapTest, Clear) {
@@ -97,8 +99,8 @@ TEST(MapTest, Merge) {
 
 TEST(MapTest, Contains) {
     s21::map<int, std::string> m = {{1, "one"}};
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_FALSE(m.contains(2));
+    EXPECT_TRUE(m.find(1) != m.end());
+    EXPECT_FALSE(m.find(2) != m.end());
 }
 
 TEST(MapTest, At) {
@@ -221,9 +223,9 @@ TEST(MapTest, Rotate_Right) {
     // (все операции должны работать корректно после вращения)
     m.erase(m.find(2));
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(3));
+    EXPECT_FALSE(m.find(2)!=m.end());
+    EXPECT_TRUE(m.find(1) != m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
 }
 
 TEST(MapTest, Assignment_Operator_With_Empty_Map) {
@@ -243,7 +245,7 @@ TEST(MapTest, Assignment_Operator_With_Empty_Map) {
     
     // Проверяем, что попытка доступа к элементам вызывает исключение
     EXPECT_THROW(m1.at(1), std::out_of_range);
-    EXPECT_FALSE(m1.contains(1));
+    EXPECT_FALSE(m1.find(1)!= m1.end());
 }
 
 TEST(MapTest, Erase_Leaf_Node) {
@@ -251,9 +253,9 @@ TEST(MapTest, Erase_Leaf_Node) {
     auto it = m.find(3); // листовой узел
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(3));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(2));
+    EXPECT_FALSE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(2)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only) {
@@ -265,9 +267,9 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only) {
     auto it = m.find(2); // узел с левым потомком
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(3));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Right_Child_Only) {
@@ -279,9 +281,9 @@ TEST(MapTest, Erase_Node_With_Right_Child_Only) {
     auto it = m.find(2); // узел с правым потомком
     m.erase(it);
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(3));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Both_Children) {
@@ -299,13 +301,13 @@ TEST(MapTest, Erase_Node_With_Both_Children) {
     m.erase(it);
     
     EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(4));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(2));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(6));
-    EXPECT_TRUE(m.contains(7));
+    EXPECT_FALSE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
 }
 
 TEST(MapTest, Erase_Root_Node) {
@@ -341,13 +343,13 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Complex) {
     m.erase(it);
     
     EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(4));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(6));
-    EXPECT_TRUE(m.contains(7));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_At_Root) {
@@ -360,8 +362,8 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_At_Root) {
     m.erase(it);
     
     EXPECT_EQ(m.size(), 1);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_Deep) {
@@ -380,14 +382,14 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Deep) {
     m.erase(it);
     
     EXPECT_EQ(m.size(), 7);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(4));
-    EXPECT_TRUE(m.contains(6));
-    EXPECT_TRUE(m.contains(8));
-    EXPECT_TRUE(m.contains(10));
-    EXPECT_TRUE(m.contains(12));
-    EXPECT_TRUE(m.contains(14));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(8)!= m.end());
+    EXPECT_TRUE(m.find(10)!= m.end());
+    EXPECT_TRUE(m.find(12)!= m.end());
+    EXPECT_TRUE(m.find(14)!= m.end());
 }
 
 TEST(MapTest, Erase_Node_With_Left_Child_Only_Multiple) {
@@ -403,19 +405,19 @@ TEST(MapTest, Erase_Node_With_Left_Child_Only_Multiple) {
     m.erase(it);
     
     EXPECT_EQ(m.size(), 3);
-    EXPECT_FALSE(m.contains(3));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(2));
-    EXPECT_TRUE(m.contains(5));
+    EXPECT_FALSE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
     
     // Удаляем узел 2 (имеет только левого потомка 1)
     it = m.find(2);
     m.erase(it);
     
     EXPECT_EQ(m.size(), 2);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(1));
-    EXPECT_TRUE(m.contains(5));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(1)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
 }
 
 TEST(MapTest, Iterator_Pre_Decrement) {
@@ -626,13 +628,13 @@ TEST(MapTest, Fix_Delete_Red_Sibling) {
     
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(4));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(6));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(8));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
+    EXPECT_TRUE(m.find(8)!= m.end());
 }
 
 TEST(MapTest, Fix_Delete_Black_Sibling_With_Black_Children) {
@@ -652,13 +654,13 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Black_Children) {
     
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(4));
-    EXPECT_TRUE(m.contains(2));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(6));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(8));
+    EXPECT_FALSE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
+    EXPECT_TRUE(m.find(8)!= m.end());
 }
 
 TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Left_Child) {
@@ -697,15 +699,15 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Left_Child) {
    
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 6);
-    EXPECT_FALSE(m.contains(3));
+    EXPECT_FALSE(m.find(3)!= m.end());
     
     // Проверяем, что все остальные элементы доступны
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(10));
-    EXPECT_TRUE(m.contains(12));
-    EXPECT_TRUE(m.contains(15));
-    EXPECT_TRUE(m.contains(17));
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
+    EXPECT_TRUE(m.find(10)!= m.end());
+    EXPECT_TRUE(m.find(12)!= m.end());
+    EXPECT_TRUE(m.find(15)!= m.end());
+    EXPECT_TRUE(m.find(17)!= m.end());
     
     // Проверяем, что структура дерева корректна после удаления
     it5 = m.find(5);
@@ -750,14 +752,14 @@ TEST(MapTest, Fix_Delete_Black_Sibling_With_Red_Right_Child) {
     
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 7);
-    EXPECT_FALSE(m.contains(6));
-    EXPECT_TRUE(m.contains(2));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(4));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(8));
-    EXPECT_TRUE(m.contains(9));
+    EXPECT_FALSE(m.find(6)!= m.end());
+    EXPECT_TRUE(m.find(2)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(4)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
+    EXPECT_TRUE(m.find(8)!= m.end());
+    EXPECT_TRUE(m.find(9)!= m.end());
 }
 
 TEST(MapTest, Fix_Delete_Complex_Case) {
@@ -794,19 +796,19 @@ TEST(MapTest, Fix_Delete_Complex_Case) {
     
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 11);
-    EXPECT_FALSE(m.contains(2));
-    EXPECT_FALSE(m.contains(4));
-    EXPECT_FALSE(m.contains(6));
-    EXPECT_FALSE(m.contains(8));
-    EXPECT_TRUE(m.contains(3));
-    EXPECT_TRUE(m.contains(5));
-    EXPECT_TRUE(m.contains(7));
-    EXPECT_TRUE(m.contains(10));
-    EXPECT_TRUE(m.contains(11));
-    EXPECT_TRUE(m.contains(12));
-    EXPECT_TRUE(m.contains(13));
-    EXPECT_TRUE(m.contains(15));
-    EXPECT_TRUE(m.contains(16));
-    EXPECT_TRUE(m.contains(17));
-    EXPECT_TRUE(m.contains(18));
+    EXPECT_FALSE(m.find(2)!= m.end());
+    EXPECT_FALSE(m.find(4)!= m.end());
+    EXPECT_FALSE(m.find(6)!= m.end());
+    EXPECT_FALSE(m.find(8)!= m.end());
+    EXPECT_TRUE(m.find(3)!= m.end());
+    EXPECT_TRUE(m.find(5)!= m.end());
+    EXPECT_TRUE(m.find(7)!= m.end());
+    EXPECT_TRUE(m.find(10)!= m.end());
+    EXPECT_TRUE(m.find(11)!= m.end());
+    EXPECT_TRUE(m.find(12)!= m.end());
+    EXPECT_TRUE(m.find(13)!= m.end());
+    EXPECT_TRUE(m.find(15)!= m.end());
+    EXPECT_TRUE(m.find(16)!= m.end());
+    EXPECT_TRUE(m.find(17)!= m.end());
+    EXPECT_TRUE(m.find(18)!= m.end());
 }

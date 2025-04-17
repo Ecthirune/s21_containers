@@ -238,7 +238,7 @@ class map {
   void merge(map& other);
 
   // Поиск
-  bool contains(const Key& key) const;
+  
   iterator find(const Key& key);
   const_iterator find(const Key& key) const;
 
@@ -248,6 +248,7 @@ class map {
   static Node* nil_;  // Статический фейк узел для листовых узлов
 
   // Вспомогательные функции
+  bool contains(const Key& key) const;
   void rotate_left(Node* x);
   void rotate_right(Node* x);
   void fix_insert(Node* z);
