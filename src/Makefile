@@ -6,7 +6,7 @@ TEST_EXE = test_runner.out
 CONTAINERS = list vector deque map
 TEST_SRC = $(wildcard tests/*_test.cpp)
 TEST_OBJ = $(TEST_SRC:.cpp=.o)
-SRC_SRC = $(wildcard s21_*/s21_*.h)
+SRC_SRC = $(wildcard s21_*.tpp/s21_*/s21_*.h)
 SRC_OBJ = $(SRC_SRC:.h=.o)
 
 .PHONY: all test clean

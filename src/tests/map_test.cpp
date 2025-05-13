@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "../s21_map/s21_map.h"
 #include <map>
+#include "../../../../mine/ConsoleApplication3/ConsoleApplication3/prettyprint.hpp"
+
 
 TEST(MapTest, Default_constructor) {
     s21::map<int, std::string> m;
@@ -780,20 +782,17 @@ TEST(MapTest, Fix_Delete_Complex_Case) {
     m.insert({13, "thirteen"});
     m.insert({16, "sixteen"});
     m.insert({18, "eighteen"});
-    
+
     // Удаляем несколько узлов, чтобы проверить разные случаи
     auto it = m.find(2);
     m.erase(it);
-    
     it = m.find(4);
     m.erase(it);
-    
     it = m.find(6);
     m.erase(it);
-    
     it = m.find(8);
     m.erase(it);
-    
+
     // Проверяем, что дерево остается сбалансированным
     EXPECT_EQ(m.size(), 11);
     EXPECT_FALSE(m.find(2)!= m.end());

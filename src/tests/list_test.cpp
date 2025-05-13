@@ -10,16 +10,16 @@ class ComplicatedClass {
   ComplicatedClass() {
     test = new int[2];
     test[0] = 5;
-    std::cout << "ComplicatedClass built" << std::endl;
+    // std::cout << "ComplicatedClass built" << std::endl;
   }
   ComplicatedClass(const ComplicatedClass& other) {
     test = new int[2];
     test[0] = other.test[0];
-    std::cout << "ComplicatedClass copied" << std::endl;
+    // std::cout << "ComplicatedClass copied" << std::endl;
   }
   ~ComplicatedClass() {
     delete[] test;
-    std::cout << "ComplicatedClass deleted" << std::endl;
+    // std::cout << "ComplicatedClass deleted" << std::endl;
   }
 };
 
@@ -114,8 +114,8 @@ TEST(ListTest, Insert_In_Middle) {
 TEST(ListTest, Insert_Invalid_Iterator) {
   s21::list<int> my_list;
   my_list.insert(my_list.begin(), 1);
-
-  s21::list<int>::iterator invalid_it;
+  s21::list<int> my_list2(5);
+  s21::list<int>::iterator invalid_it = my_list2.begin();
   ASSERT_THROW(my_list.insert(invalid_it, 42), std::out_of_range);
 }
 
