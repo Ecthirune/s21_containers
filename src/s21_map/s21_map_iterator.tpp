@@ -199,9 +199,6 @@ typename map<Key, T>::Node* map<Key, T>::MapConstIterator::getCurrent() const {
   return current_;
 };
 
-
-
-
 }  // namespace s21
 
 #endif  // S21_MAP_ITERATOR_TPP
